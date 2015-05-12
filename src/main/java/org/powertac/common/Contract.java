@@ -1,7 +1,13 @@
 package org.powertac.common;
 
 import org.joda.time.DateTime;
-
+import org.joda.time.Instant;
+import org.powertac.common.enumerations.PowerType;
+import org.powertac.common.msg.ContractOffer;
+import org.powertac.common.repo.ContractRepo;
+import org.powertac.common.spring.SpringApplicationContext;
+import org.powertac.common.state.Domain;
+@Domain
 public class Contract {
 	
 	private long id;
@@ -10,6 +16,54 @@ public class Contract {
 	private DateTime startDate;
 	private DateTime endDate;
 	private double earlyExitFee; // when DECOMMIT is send (also before startDate)
+	
+	public enum State
+	  {
+	    PENDING, OFFERED, ACCEPTED, WITHDRAWN, KILLED
+	  }
+
+	  private TimeService timeService;
+	  
+	  private ContractRepo contractRepo;
+
+	  private long offerId;
+
+	  private ContractOffer contractOffer;
+	  
+	  private Instant offerDate;
+
+	  /** The broker behind this contract */
+	  private Broker broker;
+
+	  /** Current state of this Tariff */
+	  private State state = State.PENDING;
+	  
+	  public Contract (ContractOffer offer)
+	  {
+		  setContractOffer(offer);
+	    setOfferId(offer.getId());
+	    setBroker(offer.getBroker());
+	  }
+
+	  /**
+	   * Initializes tariff by building the rate map. Must be called before
+	   * usage charges can be computed. This is not in the constructor because
+	   * of testability problems.
+	   */
+	  public boolean init ()
+	  {
+	    if (null == timeService)
+	      timeService = (TimeService)SpringApplicationContext.getBean("timeService");
+	    if (null == contractRepo)
+	    	contractRepo= (ContractRepo)SpringApplicationContext.getBean("contractRepo");
+	    
+	    setOfferDate(timeService.getCurrentTime());
+
+	    // it's good.
+	    contractRepo.addContract(this);
+	    
+	    return true;
+	  }
 	
 	public Contract(double energyPrice, double peakLoadPrice,
 			DateTime startDate, DateTime endDate, double earlyExitFee) {
@@ -60,7 +114,59 @@ public class Contract {
 	public void setEarlyExitFee(double earlyExitFee) {
 		this.earlyExitFee = earlyExitFee;
 	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public Broker getBroker() {
+		return broker;
+	}
+
+	public void setBroker(Broker broker) {
+		this.broker = broker;
+	}
+
+	public Instant getOfferDate() {
+		return offerDate;
+	}
+
+	public void setOfferDate(Instant offerDate) {
+		this.offerDate = offerDate;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
+
+	public ContractOffer getContractOffer() {
+		return contractOffer;
+	}
+
+	public void setContractOffer(ContractOffer contractOffer) {
+		this.contractOffer = contractOffer;
+	}
+
+	public long getOfferId() {
+		return offerId;
+	}
+
+	public void setOfferId(long offerId) {
+		this.offerId = offerId;
+	}
 	
+	  public PowerType getPowerType ()
+	  {
+	    return contractOffer.getPowerType();
+	  }
 	
 	
 	

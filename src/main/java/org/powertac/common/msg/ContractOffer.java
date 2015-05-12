@@ -2,13 +2,14 @@ package org.powertac.common.msg;
 
 import org.joda.time.Instant;
 import org.powertac.common.Broker;
+import org.powertac.common.enumerations.PowerType;
 import org.powertac.common.state.Domain;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @Domain(fields = { "broker", "energyPrice", "peakLoadPrice", "startDate",
-		"endDate", "earlyWithdrawPayment" })
+		"endDate", "earlyWithdrawPayment", "powerType" })
 @XStreamAlias("contract-offer")
 public class ContractOffer extends ContractNegotiationMessage {
 
@@ -23,16 +24,27 @@ public class ContractOffer extends ContractNegotiationMessage {
 	@XStreamAsAttribute
 	private double earlyWithdrawPayment; // when DECOMMIT is send (also before
 											// startDate)
+	@XStreamAsAttribute
+	private PowerType powerType = PowerType.CONSUMPTION;
 
 	public ContractOffer(Broker broker, double energyPrice,
 			double peakLoadPrice, Instant startDate, Instant endDate,
-			double earlyExitFee) {
+			double earlyExitFee, PowerType powertype) {
 		super();
 		this.energyPrice = energyPrice;
 		this.peakLoadPrice = peakLoadPrice;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.earlyWithdrawPayment = earlyExitFee;
+		this.powerType = powertype;
+	}
+
+	public PowerType getPowerType() {
+		return powerType;
+	}
+
+	public void setPowerType(PowerType powerType) {
+		this.powerType = powerType;
 	}
 
 	public double getEnergyPrice() {
