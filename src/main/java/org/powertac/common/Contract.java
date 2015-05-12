@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 
 public class Contract {
 	
+	private long id;
 	private double energyPrice; //per kWh
 	private double peakLoadPrice; //per Month per kWh
 	private DateTime startDate;
