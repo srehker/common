@@ -14,13 +14,13 @@ public abstract class ContractUpdate extends ContractNegotiationMessage{
 	  
 	  public ContractUpdate (Broker broker, ContractOffer offeredContract)
 	  {
-	    super(broker);
+	    super(broker, offeredContract.customerId);
 	    this.contractId = offeredContract.getId();
 	  }
 	  
-	  public ContractUpdate (Broker broker, long contractId)
+	  public ContractUpdate (Broker broker, long contractId, long customerId)
 	  {
-	    super(broker);
+	    super(broker, customerId);
 	    this.contractId = contractId;
 	  }
 

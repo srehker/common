@@ -72,7 +72,7 @@ public class SpringApplicationContextTests
   {
     List<DomainRepo> repos =
         SpringApplicationContext.listBeansOfType(DomainRepo.class);
-    assertEquals("7 repos", 7, repos.size());
+    assertEquals("9 repos", 9, repos.size());
     // assertTrue("type match", repos.get("brokerRepo") instanceof BrokerRepo);
   }
 
@@ -81,7 +81,7 @@ public class SpringApplicationContextTests
   {
     Map<String, DomainRepo> repos =
         SpringApplicationContext.mapBeansOfType(DomainRepo.class);
-    assertEquals("7 repos", 7, repos.size());
+    assertEquals("9 repos", 9, repos.size());
     assertTrue("type match", repos.get("brokerRepo") instanceof BrokerRepo);
   }
 

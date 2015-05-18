@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 public class TimeSeriesGenerator {
 
-	public LoadTimeSeries generateLoadTimeSeries(DateTime start, DateTime end, int fileId) {
+	public LoadTimeSeries generateLoadTimeSeries(DateTime start, DateTime end,
+			int fileId) {
 		BufferedReader br = null;
 		String line = "";
 		String cvsSplitBy = ";";
@@ -27,36 +29,40 @@ public class TimeSeriesGenerator {
 		try {
 
 			br = new BufferedReader(new FileReader(filePath
-					+ "\\src\\main\\resources\\load"+fileId+".csv"));
+					+ "\\src\\main\\resources\\load" + fileId + ".csv"));
 			br.readLine(); // skip 1st line
 			while ((line = br.readLine()) != null) {
 
 				String[] split = line.split(cvsSplitBy);
 				DateTime date = df.parseDateTime(split[0]);
-				ArrayList<Double> hourvalues = new ArrayList<Double>();
+				Interval interval = new Interval(start, end);
+				if (interval.contains(date)) {
+					ArrayList<Double> hourvalues = new ArrayList<Double>();
 
-				hourvalues.add(nf.parse(split[24]).doubleValue());// 24:00 -->
-																	// 0:00
-				for (int i = 1; i < 24; i++) {
-					double value = nf.parse(split[i]).doubleValue();
+					hourvalues.add(nf.parse(split[24]).doubleValue());// 24:00
+																		// -->
+																		// 0:00
+					for (int i = 1; i < 24; i++) {
+						double value = nf.parse(split[i]).doubleValue();
 
-					double rand = Math.random() * 100 +1;
-					if (rand >= 99) {
-						value *=1.1; //+10%
-					} else if (rand <= 2) {
-						value *=0.9; //-10%
-					} else if (rand <= 5) {
-						value *=1.01; //+1%
-					} else if (rand >= 95) {
-						value *=0.99; //-1%
+						double rand = Math.random() * 100 + 1;
+						if (rand >= 99) {
+							value *= 1.1; // +10%
+						} else if (rand <= 2) {
+							value *= 0.9; // -10%
+						} else if (rand <= 5) {
+							value *= 1.01; // +1%
+						} else if (rand >= 95) {
+							value *= 0.99; // -1%
+						}
+
+						hourvalues.add(value);
 					}
 
-					hourvalues.add(value);
+					TimeSeriesDay d = new TimeSeriesDay(
+							Daytype.getDaytypeFromDate(date), date, hourvalues);
+					days.add(d);
 				}
-
-				TimeSeriesDay d = new TimeSeriesDay(
-						Daytype.getDaytypeFromDate(date), date, hourvalues);
-				days.add(d);
 
 			}
 
@@ -75,14 +81,7 @@ public class TimeSeriesGenerator {
 				}
 			}
 		}
-		ArrayList<TimeSeriesDay> finalDays = new ArrayList<TimeSeriesDay>();
-		for (TimeSeriesDay d : days) {
-			if (d.getDate().equals(start)
-					|| d.getDate().equals(end)
-					|| (d.getDate().isAfter(start) && d.getDate().isBefore(end))) {
-				finalDays.add(d);
-			}
-		}
-		return new LoadTimeSeries(finalDays, start, end);
+
+		return new LoadTimeSeries(days, start, end);
 	}
 }

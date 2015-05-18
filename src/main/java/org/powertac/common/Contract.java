@@ -7,64 +7,66 @@ import org.powertac.common.msg.ContractOffer;
 import org.powertac.common.repo.ContractRepo;
 import org.powertac.common.spring.SpringApplicationContext;
 import org.powertac.common.state.Domain;
+
 @Domain
 public class Contract {
-	
+
 	private long id;
-	private double energyPrice; //per kWh
-	private double peakLoadPrice; //per Month per kWh
+	private double energyPrice; // per kWh
+	private double peakLoadPrice; // per Month per kWh
 	private DateTime startDate;
 	private DateTime endDate;
-	private double earlyExitFee; // when DECOMMIT is send (also before startDate)
-	
-	public enum State
-	  {
-	    PENDING, OFFERED, ACCEPTED, WITHDRAWN, KILLED
-	  }
+	private double earlyExitFee; // when DECOMMIT is send (also before
+									// startDate)
 
-	  private TimeService timeService;
-	  
-	  private ContractRepo contractRepo;
+	public enum State {
+		PENDING, OFFERED, ACCEPTED, WITHDRAWN, KILLED
+	}
 
-	  private long offerId;
+	private TimeService timeService;
 
-	  private ContractOffer contractOffer;
-	  
-	  private Instant offerDate;
+	private ContractRepo contractRepo;
 
-	  /** The broker behind this contract */
-	  private Broker broker;
+	private long offerId;
 
-	  /** Current state of this Tariff */
-	  private State state = State.PENDING;
-	  
-	  public Contract (ContractOffer offer)
-	  {
-		  setContractOffer(offer);
-	    setOfferId(offer.getId());
-	    setBroker(offer.getBroker());
-	  }
+	private ContractOffer contractOffer;
 
-	  /**
-	   * Initializes tariff by building the rate map. Must be called before
-	   * usage charges can be computed. This is not in the constructor because
-	   * of testability problems.
-	   */
-	  public boolean init ()
-	  {
-	    if (null == timeService)
-	      timeService = (TimeService)SpringApplicationContext.getBean("timeService");
-	    if (null == contractRepo)
-	    	contractRepo= (ContractRepo)SpringApplicationContext.getBean("contractRepo");
-	    
-	    setOfferDate(timeService.getCurrentTime());
+	private Instant offerDate;
 
-	    // it's good.
-	    contractRepo.addContract(this);
-	    
-	    return true;
-	  }
-	
+	/** The broker behind this contract */
+	private Broker broker;
+
+	/** Current state of this Tariff */
+	private State state = State.PENDING;
+
+	public Contract(ContractOffer offer) {
+		setContractOffer(offer);
+		setOfferId(offer.getId());
+		setBroker(offer.getBroker());
+	}
+
+	/**
+	 * Initializes tariff by building the rate map. Must be called before usage
+	 * charges can be computed. This is not in the constructor because of
+	 * testability problems.
+	 */
+	public boolean init() {
+		if (null == timeService)
+			timeService = (TimeService) SpringApplicationContext
+					.getBean("timeService");
+		if (null == contractRepo)
+			contractRepo = (ContractRepo) SpringApplicationContext
+					.getBean("contractRepo");
+
+		setOfferDate(timeService.getCurrentTime());
+
+		// it's good.
+		contractRepo.addContract(this);
+
+		return true;
+	}
+
+	@Deprecated
 	public Contract(double energyPrice, double peakLoadPrice,
 			DateTime startDate, DateTime endDate, double earlyExitFee) {
 		super();
@@ -162,13 +164,9 @@ public class Contract {
 	public void setOfferId(long offerId) {
 		this.offerId = offerId;
 	}
-	
-	  public PowerType getPowerType ()
-	  {
-	    return contractOffer.getPowerType();
-	  }
-	
-	
-	
+
+	public PowerType getPowerType() {
+		return contractOffer.getPowerType();
+	}
 
 }

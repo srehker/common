@@ -1,6 +1,5 @@
 package org.powertac.common.msg;
 
-import org.joda.time.Instant;
 import org.powertac.common.Broker;
 import org.powertac.common.enumerations.PowerType;
 import org.powertac.common.state.Domain;
@@ -8,33 +7,29 @@ import org.powertac.common.state.Domain;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@Domain(fields = { "broker", "energyPrice", "peakLoadPrice", "startDate",
-		"endDate", "earlyWithdrawPayment", "powerType" })
+@Domain(fields = { "broker", "customerId", "energyPrice", "peakLoadPrice", "duration", "earlyWithdrawPayment", "powerType" })
 @XStreamAlias("contract-offer")
 public class ContractOffer extends ContractNegotiationMessage {
 
 	@XStreamAsAttribute
 	private double energyPrice = 0.0; // per kWh
 	@XStreamAsAttribute
-	private double peakLoadPrice = 0.0; // per Month per kWh
+	private double peakLoadPrice = 0.0; // highest peak per Month per kWh
 	@XStreamAsAttribute
-	private Instant startDate;
+	private long duration; // in ms
 	@XStreamAsAttribute
-	private Instant endDate;
-	@XStreamAsAttribute
-	private double earlyWithdrawPayment; // when DECOMMIT is send (also before
-											// startDate)
+	private double earlyWithdrawPayment; // when DECOMMIT is send 
 	@XStreamAsAttribute
 	private PowerType powerType = PowerType.CONSUMPTION;
 
-	public ContractOffer(Broker broker, double energyPrice,
-			double peakLoadPrice, Instant startDate, Instant endDate,
+	public ContractOffer(Broker broker, long customerId, double energyPrice,
+			double peakLoadPrice, long duration,
 			double earlyExitFee, PowerType powertype) {
 		super();
+		
 		this.energyPrice = energyPrice;
 		this.peakLoadPrice = peakLoadPrice;
-		this.startDate = startDate;
-		this.endDate = endDate;
+		this.duration = duration;
 		this.earlyWithdrawPayment = earlyExitFee;
 		this.powerType = powertype;
 	}
@@ -62,21 +57,13 @@ public class ContractOffer extends ContractNegotiationMessage {
 	public void setPeakLoadPrice(double peakLoadPrice) {
 		this.peakLoadPrice = peakLoadPrice;
 	}
-
-	public Instant getStartDate() {
-		return startDate;
+	
+	public long getDuration() {
+		return duration;
 	}
 
-	public void setStartDate(Instant startDate) {
-		this.startDate = startDate;
-	}
-
-	public Instant getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Instant endDate) {
-		this.endDate = endDate;
+	public void setDuration(long duration) {
+		this.duration = duration;
 	}
 
 	public double getEarlyWithdrawPayment() {
@@ -85,6 +72,11 @@ public class ContractOffer extends ContractNegotiationMessage {
 
 	public void setEarlyWithdrawPayment(double earlyWithdrawPayment) {
 		this.earlyWithdrawPayment = earlyWithdrawPayment;
+	}
+	
+	public String toString(){
+		return "Offer[energyPrice="+energyPrice+", peakLoadPrice="+peakLoadPrice+", duration="+duration+", earlyWithdrawPayment="+earlyWithdrawPayment+"]";
+		
 	}
 
 }

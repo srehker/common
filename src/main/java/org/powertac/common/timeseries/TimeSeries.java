@@ -2,9 +2,11 @@ package org.powertac.common.timeseries;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 
 public class TimeSeries {
@@ -70,6 +72,43 @@ public class TimeSeries {
 
 	public void setToDate(DateTime toDate) {
 		this.toDate = toDate;
+	}
+	
+	public void addValue(DateTime timestamp, double value){
+		TimeSeriesDay td=findDayRecord(timestamp);
+		
+		if(td==null){
+			td = new TimeSeriesDay(Daytype.getDaytypeFromDate(timestamp), timestamp.withHourOfDay(0), new ArrayList<Double>());
+		}
+		td.getHourvalues().set(timestamp.getHourOfDay(), value);
+	}
+	
+	public void sumValue(DateTime timestamp, double value){
+		TimeSeriesDay td=findDayRecord(timestamp);
+		
+		if(td==null){
+			td = new TimeSeriesDay(Daytype.getDaytypeFromDate(timestamp), timestamp.withHourOfDay(0), new ArrayList<Double>());
+		}
+		td.getHourvalues().set(timestamp.getHourOfDay(), value+td.getHourvalues().get(timestamp.getHourOfDay()));
+	}
+	
+	public TimeSeriesDay findDayRecord(DateTime timestamp){
+		
+		for(TimeSeriesDay d: days){
+			Interval i = new Interval(d.getDate(), d.getDate().plusHours(24));
+			if(i.contains(timestamp)){
+				return d;
+			}
+		}
+		return null;
+	}
+	
+	public double getValue(DateTime timestamp){
+		TimeSeriesDay d = findDayRecord(timestamp);
+		if(d == null){
+			return -1;
+		}
+		return d.getHourvalues().get(timestamp.getHourOfDay());
 	}
 
 }
