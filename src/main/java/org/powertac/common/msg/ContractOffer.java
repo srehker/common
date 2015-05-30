@@ -25,7 +25,7 @@ public class ContractOffer extends ContractNegotiationMessage {
 	public ContractOffer(Broker broker, long customerId, double energyPrice,
 			double peakLoadPrice, long duration,
 			double earlyExitFee, PowerType powertype) {
-		super();
+		super(broker, customerId);
 		
 		this.energyPrice = energyPrice;
 		this.peakLoadPrice = peakLoadPrice;

@@ -36,19 +36,18 @@ public class Contract {
 	/** The broker behind this contract */
 	private Broker broker;
 
-	/** Current state of this Tariff */
+	/** Current state of this contract */
 	private State state = State.PENDING;
 
 	public Contract(ContractOffer offer) {
+		id= IdGenerator.createId();
 		setContractOffer(offer);
 		setOfferId(offer.getId());
 		setBroker(offer.getBroker());
 	}
 
 	/**
-	 * Initializes tariff by building the rate map. Must be called before usage
-	 * charges can be computed. This is not in the constructor because of
-	 * testability problems.
+	 * Initializes contract setting offerdate.
 	 */
 	public boolean init() {
 		if (null == timeService)
@@ -60,7 +59,7 @@ public class Contract {
 
 		setOfferDate(timeService.getCurrentTime());
 
-		// it's good.
+		
 		contractRepo.addContract(this);
 
 		return true;
