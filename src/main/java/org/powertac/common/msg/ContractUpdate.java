@@ -9,13 +9,12 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public abstract class ContractUpdate extends ContractNegotiationMessage{
 	
 	
-	@XStreamAsAttribute
-	private long contractId;
+
 	  
-	  public ContractUpdate (Broker broker, ContractOffer offeredContract)
+	  public ContractUpdate (Broker broker, ContractOffer contractOffer)
 	  {
-	    super(broker, offeredContract.customerId);
-	    this.contractId = offeredContract.getId();
+	    super(broker, contractOffer.customerId);
+	    this.contractId = contractOffer.getContractId();
 	  }
 	  
 	  public ContractUpdate (Broker broker, long contractId, long customerId)
@@ -24,10 +23,6 @@ public abstract class ContractUpdate extends ContractNegotiationMessage{
 	    this.contractId = contractId;
 	  }
 
-	  public long getContractId ()
-	  {
-	    return contractId;
-	  }
 	  
 	  // protected constructor for simplified deserialization
 	  protected ContractUpdate ()

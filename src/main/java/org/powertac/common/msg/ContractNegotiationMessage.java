@@ -47,6 +47,18 @@ public abstract class ContractNegotiationMessage extends XStreamStateLoggable
 		return customerId;
 	}
 
+	public long getContractId() {
+		return contractId;
+	}
+
+	public void setContractId(long contractId) {
+		this.contractId = contractId;
+	}
+
+	public void setCustomerId(long customerId) {
+		this.customerId = customerId;
+	}
+
 	@Override
 	public boolean isValid() {
 		return true;

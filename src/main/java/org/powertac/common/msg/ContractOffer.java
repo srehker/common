@@ -7,7 +7,7 @@ import org.powertac.common.state.Domain;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@Domain(fields = { "broker", "customerId", "energyPrice", "peakLoadPrice", "duration", "earlyWithdrawPayment", "powerType" })
+@Domain(fields = { "broker", "customerId", "contractId", "energyPrice", "peakLoadPrice", "duration", "earlyWithdrawPayment", "powerType" })
 @XStreamAlias("contract-offer")
 public class ContractOffer extends ContractNegotiationMessage {
 

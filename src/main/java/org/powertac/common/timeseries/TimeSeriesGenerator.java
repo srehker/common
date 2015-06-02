@@ -22,14 +22,13 @@ public class TimeSeriesGenerator {
 		String line = "";
 		String cvsSplitBy = ";";
 		String filePath = new File("").getAbsolutePath();
-		System.out.println(filePath);
 		ArrayList<TimeSeriesDay> days = new ArrayList<TimeSeriesDay>();
 		DateTimeFormatter df = DateTimeFormat.forPattern("dd.MM.yyyy");
 		NumberFormat nf = NumberFormat.getInstance(Locale.GERMAN);
 		try {
 
 			br = new BufferedReader(new FileReader(filePath
-					+ "\\src\\main\\resources\\load" + fileId + ".csv"));
+					+ "\\src\\main\\resources\\load" + (fileId+1) + ".csv"));
 			br.readLine(); // skip 1st line
 			while ((line = br.readLine()) != null) {
 

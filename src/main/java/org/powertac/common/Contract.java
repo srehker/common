@@ -41,9 +41,11 @@ public class Contract {
 
 	public Contract(ContractOffer offer) {
 		id= IdGenerator.createId();
+		System.out.println("Created contract with id="+id);
 		setContractOffer(offer);
 		setOfferId(offer.getId());
 		setBroker(offer.getBroker());
+		offer.setContractId(id);		
 	}
 
 	/**
