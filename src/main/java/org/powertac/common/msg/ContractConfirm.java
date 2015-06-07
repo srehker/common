@@ -7,10 +7,17 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @Domain (fields = {"broker", "contractId"})
 @XStreamAlias("contract-confirm")
-public class ContractConfirm extends ContractUpdate{
-	public ContractConfirm (Broker broker, ContractOffer contract)
+public class ContractConfirm extends ContractNegotiationMessage{
+	public ContractConfirm (Broker broker, ContractAccept contract)
 	  {
-	    super(broker, contract);
+	    super(broker, contract.getCustomerId());
+	    this.contractId = contract.getContractId();
+	  }
+	
+	public ContractConfirm (Broker broker, ContractDecommit contract)
+	  {
+	    super(broker, contract.getCustomerId());
+	    this.contractId = contract.getContractId();
 	  }
 	  
 	  // protected default constructor for reflection
