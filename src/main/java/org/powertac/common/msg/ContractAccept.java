@@ -40,4 +40,8 @@ public class ContractAccept extends ContractOffer {
 			boolean acceptedEarlyWithdrawPayment) {
 		this.acceptedEarlyWithdrawPayment = acceptedEarlyWithdrawPayment;
 	}
+	
+	public boolean isEveryIssueAccepted(){
+		return acceptedDuration && acceptedEarlyWithdrawPayment && acceptedEnergyPrice && acceptedPeakLoadPrice;
+	}
 }
