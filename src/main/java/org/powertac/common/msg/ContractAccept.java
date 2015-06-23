@@ -6,13 +6,15 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @Domain(fields = { "broker", "customerId", "contractId", "energyPrice",
 		"peakLoadPrice", "duration", "earlyWithdrawPayment", "powerType",
-		"acceptedEnergyPrice", "acceptedPeakLoadPrice", "acceptedDuration",
-		"acceptedEarlyWithdrawPayment" })
+		"discussedIssue", "acceptedEnergyPrice", "acceptedPeakLoadPrice",
+		"acceptedDuration", "acceptedEarlyWithdrawPayment" })
 @XStreamAlias("contract-accept")
 public class ContractAccept extends ContractOffer {
 
 	/**
-	 * copies accept states from offer, SET CURRENTLY ACCEPTED BY HAND BEFORE SENDING
+	 * copies accept states from offer, SET CURRENTLY ACCEPTED BY HAND BEFORE
+	 * SENDING
+	 * 
 	 * @param contract
 	 */
 	public ContractAccept(ContractOffer contract) {
@@ -40,8 +42,9 @@ public class ContractAccept extends ContractOffer {
 			boolean acceptedEarlyWithdrawPayment) {
 		this.acceptedEarlyWithdrawPayment = acceptedEarlyWithdrawPayment;
 	}
-	
-	public boolean isEveryIssueAccepted(){
-		return acceptedDuration && acceptedEarlyWithdrawPayment && acceptedEnergyPrice && acceptedPeakLoadPrice;
+
+	public boolean isEveryIssueAccepted() {
+		return acceptedDuration && acceptedEarlyWithdrawPayment
+				&& acceptedEnergyPrice && acceptedPeakLoadPrice;
 	}
 }

@@ -1,6 +1,7 @@
 package org.powertac.common.msg;
 
 import org.powertac.common.Broker;
+import org.powertac.common.enumerations.ContractIssue;
 import org.powertac.common.enumerations.PowerType;
 import org.powertac.common.state.Domain;
 
@@ -9,8 +10,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @Domain(fields = { "broker", "customerId", "contractId", "energyPrice",
 		"peakLoadPrice", "duration", "earlyWithdrawPayment", "powerType",
-		"acceptedEnergyPrice", "acceptedPeakLoadPrice", "acceptedDuration",
-		"acceptedEarlyWithdrawPayment" })
+		"discussedIssue", "acceptedEnergyPrice", "acceptedPeakLoadPrice",
+		"acceptedDuration", "acceptedEarlyWithdrawPayment" })
 @XStreamAlias("contract-offer")
 public class ContractOffer extends ContractNegotiationMessage {
 
@@ -24,7 +25,8 @@ public class ContractOffer extends ContractNegotiationMessage {
 	private double earlyWithdrawPayment; // when DECOMMIT is send
 	@XStreamAsAttribute
 	private PowerType powerType = PowerType.CONSUMPTION;
-
+	@XStreamAsAttribute
+	private ContractIssue discussedIssue = ContractIssue.NONE;
 	@XStreamAsAttribute
 	protected boolean acceptedEnergyPrice = false;
 	@XStreamAsAttribute
@@ -75,6 +77,7 @@ public class ContractOffer extends ContractNegotiationMessage {
 				.isAcceptedEarlyWithdrawPayment();
 		this.acceptedEnergyPrice = offer.isAcceptedEnergyPrice();
 		this.acceptedPeakLoadPrice = offer.isAcceptedPeakLoadPrice();
+		this.discussedIssue = offer.getDiscussedIssue();
 	}
 
 	/**
@@ -95,6 +98,7 @@ public class ContractOffer extends ContractNegotiationMessage {
 				.isAcceptedEarlyWithdrawPayment();
 		this.acceptedEnergyPrice = accept.isAcceptedEnergyPrice();
 		this.acceptedPeakLoadPrice = accept.isAcceptedPeakLoadPrice();
+		this.discussedIssue = ContractIssue.NONE; // this is important!!!
 	}
 
 	/**
@@ -158,6 +162,18 @@ public class ContractOffer extends ContractNegotiationMessage {
 
 	public boolean isAcceptedEarlyWithdrawPayment() {
 		return acceptedEarlyWithdrawPayment;
+	}
+
+	public ContractIssue getDiscussedIssue() {
+		return discussedIssue;
+	}
+
+	public void setDiscussedIssue(ContractIssue discussedIssue) {
+		this.discussedIssue = discussedIssue;
+	}
+	
+	public boolean isDiscussedIssue(ContractIssue issue){
+		return discussedIssue.equals(issue)||discussedIssue.equals(ContractIssue.NONE);
 	}
 
 	public String toString() {
