@@ -9,16 +9,18 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.powertac.common.Broker;
 import org.powertac.common.Contract;
+import org.powertac.common.TimeService;
 import org.powertac.common.enumerations.PowerType;
 import org.powertac.common.msg.ContractOffer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class ContractRepo implements DomainRepo {
 	static private Logger log = Logger.getLogger(ContractRepo.class.getName());
 
-	// @Autowired
-	// private TimeService timeService;
+	 @Autowired
+	 private TimeService timeService;
 
 	private HashMap<Long, ContractOffer> offers;
 	private HashSet<Long> deletedContracts;
@@ -54,7 +56,7 @@ public class ContractRepo implements DomainRepo {
 
 	public void setDefaultContract(ContractOffer newSpec) {
 		addSpecification(newSpec);
-		Contract Contract = new Contract(newSpec);
+		Contract Contract = new Contract(newSpec, timeService.getCurrentTime().getMillis());
 		Contract.init();
 		defaultContracts.put(newSpec.getPowerType(), Contract);
 	}
@@ -85,16 +87,6 @@ public class ContractRepo implements DomainRepo {
 		return result;
 	}
 
-	public synchronized List<ContractOffer> findContractOffersByPowerType(
-			PowerType type) {
-		List<ContractOffer> result = new ArrayList<ContractOffer>();
-		for (ContractOffer offer : offers.values()) {
-			if (offer.getPowerType().canUse(type)) {
-				result.add(offer);
-			}
-		}
-		return result;
-	}
 
 	public synchronized List<ContractOffer> findAllContractOffers() {
 		return new ArrayList<ContractOffer>(offers.values());
@@ -124,74 +116,6 @@ public class ContractRepo implements DomainRepo {
 		return contracts.get(id);
 	}
 
-	public synchronized List<Contract> findAllContracts() {
-		return new ArrayList<Contract>(contracts.values());
-	}
-
-	public synchronized List<Contract> findContractsByState(Contract.State state) {
-		ArrayList<Contract> result = new ArrayList<Contract>();
-		for (Contract Contract : contracts.values()) {
-			if (state == Contract.getState()) {
-				result.add(Contract);
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Returns the list of active Contracts that exactly match the given
-	 * PowerType.
-	 */
-	public synchronized List<Contract> findActiveContracts(PowerType type) {
-		List<Contract> result = new ArrayList<Contract>();
-		for (Contract Contract : contracts.values()) {
-			if (Contract.getPowerType() == type) {
-				result.add(Contract);
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Returns the list of active Contracts that can be used by a customer of
-	 * the given PowerType, including those that are more generic than the
-	 * offerific type.
-	 */
-	public synchronized List<Contract> findAllActiveContracts(PowerType type) {
-		List<Contract> result = new ArrayList<Contract>();
-		for (Contract contract : contracts.values()) {
-			if (type.canUse(contract.getPowerType())) {
-				result.add(contract);
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Returns the n most "recent" active Contracts from each broker that can be
-	 * used by a customer with the given powerType.
-	 */
-	public synchronized List<Contract> findRecentActiveContracts(int n,
-			PowerType type) {
-		List<Contract> result = new ArrayList<Contract>();
-		HashMap<PowerType, Integer> ptCounter = new HashMap<PowerType, Integer>();
-		for (Long id : brokerContracts.keySet()) {
-			ptCounter.clear();
-			for (Contract contract : brokerContracts.get(id)) {
-				PowerType pt = contract.getPowerType();
-				if (type.canUse(pt)) {
-					Integer count = ptCounter.get(pt);
-					if (null == count)
-						count = 0;
-					if (count < n) {
-						result.add(contract);
-						ptCounter.put(pt, count + 1);
-					}
-				}
-			}
-		}
-		return result;
-	}
 
 	public List<Contract> findContractsByBroker(Broker broker) {
 		List<Contract> result = brokerContracts.get(broker.getId());

@@ -39,13 +39,14 @@ public class Contract {
 	/** Current state of this contract */
 	private State state = State.PENDING;
 
-	public Contract(ContractOffer offer) {
+	public Contract(ContractOffer offer, long startDate) {
 		id= IdGenerator.createId();
 		System.out.println("Created contract with id="+id);
 		setContractOffer(offer);
 		setOfferId(offer.getId());
 		setBroker(offer.getBroker());
-		offer.setContractId(id);		
+		offer.setContractId(id);
+		setStartDate(new DateTime(startDate));
 	}
 
 	/**
